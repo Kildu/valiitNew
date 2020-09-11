@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <>
+    <title>Bankservices</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+    <br>
+    <h1 style="text-align:center">Bank Manager</h1>
+</header>
+
+<div>
+    <br>
+    <input type="text" id="firstName" placeholder="First name" style="margin:auto ;display:block">
+    <input type="text" id="lastName" placeholder="Last name" style="margin:auto;display:block">
+    <input type="text" id="username" placeholder="Username" style="margin:auto;display:block">
+    <input type="text" id="password" placeholder="Password" style="margin:auto;display:block">
+    <br>
+    <button id="createClient" type="button" style="margin:auto;display:block">
+        Create a client
+    </button>
+    <br>
+    <input type="text" id="accountNr" placeholder="Account no" style="margin:auto ;display:block">
+    <input type="text" id="balance" placeholder="Balance" style="margin:auto;display:block">
+    <input type="text" id="clientId" placeholder="Your client id" style="margin:auto;display:block">
+    <br>
+    <button id="createAccount" type="button" style="margin:auto;display:block">
+        Create new account
+    </button>
+    <br>
+    <input type="text" id="accountNum" placeholder="Account no" style="margin:auto;display:block">
+    <br>
+    <button id="checkBalance" type="button" style="margin:auto;display:block">
+        Check balance       <!--buttoni nimi, mis tuleb buttoni peale-->
+    </button>
+    <br>
+    <button id="getAccountList" type="button" style="margin:auto;display:block">
+        Display account list       <!--buttoni nimi, mis tuleb buttoni peale-->
+    </button>
+    <br>
+    <input type="text" id="accountN" placeholder="Account no" style="margin:auto ;display:block">
+    <input type="number" id="amount" placeholder="Amount" style="margin:auto;display:block">
+    <br>
+    <button id="deposit" type="button" style="margin:auto;display:block">
+        Make a deposit
+    </button>
+    <br>
+    <button id="withdraw" type="button" style="margin:auto;display:block">
+        Withdraw money
+    </button>
+    <br>
+    <input type="text" id="fromAccount" placeholder="From account no" style="margin:auto ;display:block">
+    <input type="text" id="toAccount" placeholder="To account no" style="margin:auto ;display:block">
+    <input type="number" id="transferAmount" placeholder="Amount" style="margin:auto;display:block">
+    <br>
+    <button id="transfer" type="button" style="margin:auto;display:block">
+        Make a transfer
+    </button>
+
+</div>
+
+
+<script>
+    /*Create new client*/
+    let inputFirstName = document.getElementById("firstName");
+    let inputLastName = document.getElementById("lastName");
+    let inputUsername = document.getElementById("username");
+    let inputPassword = document.getElementById("password");
+    let buttonCreateClient = document.getElementById("createClient");
+    buttonCreateClient.addEventListener('click', function () {
+
+        fetch('bankservice/client', {
+            method: 'POST',
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                firstName: inputFirstName.value,        /*Body: stringify -> teen string'ks. kui panen loogeliste sulgude vahele {}, siis teen objektiks*/
+                lastName: inputLastName.value,
+                username: inputUsername.value,
+                password: inputPassword.value
+            })
+        })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (jsonData) {
+                /*for (let i = 0; i < jsonData.length; i++) {
+                    let item = jsonData[i];
+                    console.log(item.accountNr);
+                }*/
+                console.log(jsonData.id);
+            })
+            .catch(function (err) {
+                console.log(err);
+            });
+        document.getElementById("firstName").value = "";              /*Tühjendan inputBox'i'*/
+        document.getElementById("lastName").value = "";
+        document.getElementById("username").value = "";
+        document.getElementById("password").value = "";
+    })
+
+    /*Create new account*/
+    let buttonCreateAccount = document.getElementById("createAccount");
+    buttonCreateAccount.addEventListener('click', function () {
+
+        let inputAccountNr = document.getElementById("accountNr");
+        let inputBalance = document.getElementById("balance");
+        let inputClientId = document.getElementById("clientId");
+
+        fetch('bankservice', {
+            method: 'POST',
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                accountNr: inputAccountNr.value,
+                balance: inputBalance.value,
+                clientId: inputClientId.value
+            })
+        })
+            .catch(function (err) {
+                console.log(err);
+            });
+        document.getElementById("accountNr").value = "";
+        document.getElementById("balance").value = "";
+        document.getElementById("clientId").value = "";
+    })
+
+    /*Display account balance*/
+    let inputAccountNum = document.getElementById("accountNum");
+    let buttonCheckBalance = document.getElementById("checkBalance");
+    buttonCheckBalance.addEventListener('click', function () {
+
+        fetch('/bankservice/' + inputAccountNum.value, {
+            method: 'GET',
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (jsonData) {
+                /*                for (let i = 0; i < jsonData.length; i++) {
+                                    let item = jsonData[i];
+                                    console.log(item.accountNr);
+                                }*/
+                console.log(jsonData);
+            })
+            .catch(function (err) {
+                console.log(err);
+            });
+        document.getElementById("accountNum").value = "";
+    })
+
+    /*Display all accounts*/
+    let buttonAccountList = document.getElementById("getAccountList");
+    buttonAccountList.addEventListener('click', function () {
+
+        fetch('/bankservice', {
+            method: 'GET',
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (jsonData) {
+/*                for (let i = 0; i < jsonData.length; i++) {
+                    let item = jsonData[i];
+                    console.log(item);
+                }*/
+                console.log(jsonData);
+            })
+            .catch(function (err) {
+                console.log(err);
+            });
+    })
+
+    /*Make a deposit*/
+    let inputAccountN = document.getElementById("accountN");
+    let inputAmount = document.getElementById("amount");
+    let buttonDeposit = document.getElementById("deposit");
+    buttonDeposit.addEventListener('click', function () {
+
+        fetch('/bankservice/' + inputAccountN.value, {
+            method: 'PUT',
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: inputAmount.value                 /*loe body'sse int*/
+        })
+            .catch(function (err) {
+                console.log(err);
+            });
+        inputAccountN.value = "";
+        inputAmount.value = "";
+    })
+
+    /*Withdraw money*/
+    let inputAccountNumber = document.getElementById("accountN");
+    let inputAmountWithdraw = document.getElementById("amount");
+    let buttonWithdraw = document.getElementById("withdraw");
+    buttonWithdraw.addEventListener('click', function () {
+        alert("bingo");
+
+        fetch('/bankservice/wd/' + inputAccountNumber.value, {
+            method: 'PUT',
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: inputAmountWithdraw.value
+        })
+            .catch(function (err) {
+                console.log(err);
+            });
+        inputAccountNumber.value = "";
+        inputAmountWithdraw.value = "";
+    })
+
+    /*Make a transfer*/
+    let inputFromAccount = document.getElementById("fromAccount");
+    let inputToAccount = document.getElementById("toAccount");
+    let inputTransfer = document.getElementById("transferAmount");
+    let buttonTransfer = document.getElementById("transfer");
+    buttonTransfer.addEventListener('click', function () {
+        alert("check?");
+
+        fetch('bankservice/transfer', {
+            method: 'PUT',
+            cache: 'no-cache',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({                          /*Body: stringify -> teen string'ks. kui panen loogeliste sulgude vahele {}, siis teen objektiks*/
+                fromAccount: inputFromAccount.value,
+                toAccount: inputToAccount.value,
+                transferAmount: inputTransfer.value
+            })
+        })
+            .catch(function (err) {
+                console.log(err);
+            });
+        document.getElementById("fromAccount").value = "";
+        document.getElementById("toAccount").value = "";
+        document.getElementById("transferAmount").value = "";
+    })
+
+
+</script>
+
+</body>
+
+</html>
+

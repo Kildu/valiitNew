@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+
+createTable:
+  tableName: person
+  columns:
+    - column:
+    name: id
+    type: int
+    autoIncrement: true
+    constraints:
+      primaryKey: true
+      nullable: false
+
+  - column:
+      name: student_i
+      type: int
+      constraints:
+        foreignKeyName: fk_account_client
+        nullable: false
+        references: account(id)

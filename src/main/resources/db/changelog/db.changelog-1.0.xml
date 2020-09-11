@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+
+
+    <changeSet  author="Kildu"  id="04.09.2020_bank_manager">
+        <!--client table-->
+        <createTable  tableName="client">
+            <column  name="id"  type="int" autoIncrement="true">
+                <constraints  nullable="false"  primaryKey="true"  unique="true"/>
+            </column>
+            <column  name="first_name"  type="text">
+                <constraints  nullable="false"/>
+            </column>
+            <column  name="last_name"  type="text">
+                <constraints  nullable="false"/>
+            </column>
+        </createTable>
+        <!--account table-->
+        <createTable  tableName="account">
+            <column  name="id"  type="bigint" autoIncrement="true">
+                <constraints  nullable="false"  primaryKey="true"  unique="true"/>
+            </column>
+            <column  name="account_nr"  type="text">
+                <constraints  nullable="false" unique="true"/>
+            </column>
+            <column  name="balance"  type="bigint">
+                <constraints  nullable="true" unique="false"/>
+            </column>
+            <column  name="client_id"  type="int">
+                <constraints  nullable="false" unique="false" foreignKeyName="fk_account_client" references="client(id)"/>
+            </column>
+        </createTable>
+        <!--transfer_list table-->
+        <createTable  tableName="transfer_list">
+            <column  name="sender_account"  type="text">
+                <constraints  nullable="false"  primaryKey="true"  unique="false"/>
+            </column>
+            <column  name="receiver_account"  type="text">
+                <constraints  nullable="false"  primaryKey="false"  unique="false"/>
+            </column>
+            <column  name="amount"  type="bigint">
+                <constraints  nullable="false"  primaryKey="false"  unique="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet  author="Kildu"  id="2020-09-04 add transfer type">   <!--Kpv sedasi (ISO formaadis) nimi peab olema uus-->
+        <!--client table-->
+        <addColumn  tableName="transfer_list">
+            <column  name="type"  type="text">
+                <constraints  nullable="false"  primaryKey="false"  unique="false"/>
+            </column>
+        </addColumn>
+
+    </changeSet>
+
+
+    <changeSet  author="Kildu"  id="2020-09-06 update columns in transfer_list table">   <!--Kpv sedasi (ISO formaadis) nimi peab olema uus-->
+        <!--transfer_list table-->
+        <dropColumn  tableName="transfer_list">
+            <column  name="receiver_account"/>
+        </dropColumn>
+        <dropColumn  tableName="transfer_list">
+            <column  name="sender_account"/>
+        </dropColumn>
+        <addColumn  tableName="transfer_list">
+            <column  name="id"  type="bigint" autoIncrement="true">
+                <constraints  nullable="false"  primaryKey="true"  unique="true"/>
+            </column>
+        </addColumn>
+        <addColumn  tableName="transfer_list">
+            <column  name="id_to_account"  type="bigint">
+                <constraints  nullable="false"  primaryKey="false"  unique="false"/>
+            </column>
+        </addColumn>
+        <addColumn tableName="transfer_list">
+            <column  name="to_account"  type="text">
+                <constraints  nullable="false"  primaryKey="false"  unique="false"/>
+        </column>
+        </addColumn>
+        <addColumn  tableName="transfer_list">
+            <column  name="id_from_account"  type="bigint">
+                <constraints  nullable="false"  primaryKey="false"  unique="false"/>
+            </column>
+        </addColumn>
+        <addColumn  tableName="transfer_list">
+            <column  name="from_account"  type="text">
+                <constraints  nullable="false"  primaryKey="false"  unique="false"/>
+            </column>
+        </addColumn>
+     </changeSet>
+
+    <changeSet  author="Kildu"  id="2020-09-07 drop columns from transfer_list table">
+        <dropColumn  tableName="transfer_list">
+            <column  name="to_account"/>
+        </dropColumn>
+        <dropColumn  tableName="transfer_list">
+            <column  name="from_account"/>
+        </dropColumn>
+    </changeSet>
+
+    <changeSet  author="Kildu"  id="2020-09-07 drop columns from transfer_list table_update id-s">
+        <dropColumn  tableName="transfer_list">
+            <column  name="id_to_account"/>
+        </dropColumn>
+        <dropColumn  tableName="transfer_list">
+            <column  name="id_from_account"/>
+        </dropColumn>
+    <addColumn  tableName="transfer_list">
+        <column  name="id_to_account"  type="bigint">
+            <constraints  nullable="true"  primaryKey="false"  unique="false"/>
+        </column>
+    </addColumn>
+        <addColumn  tableName="transfer_list">
+            <column  name="id_from_account"  type="bigint">
+                <constraints  nullable="true"  primaryKey="false"  unique="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet  author="Kildu"  id="2020-09-07 add ForeignKeys to transfer_list table">
+        <addForeignKeyConstraint  baseColumnNames="id_to_account"
+                                  baseTableName="transfer_list"
+                                  constraintName="fk_transfer_list_account"
+                                  deferrable="true"
+                                  initiallyDeferred="true"
+                                  onDelete="CASCADE"
+                                  onUpdate="RESTRICT"
+                                  referencedColumnNames="id"
+                                  referencedTableName="account"
+                                  validate="true"/>
+    </changeSet>
+
+    <changeSet  author="Kildu"  id="2020-09-07 add ForeignKeys to transfer_list table (id_from_account)">
+        <addForeignKeyConstraint  baseColumnNames="id_from_account"
+                                  baseTableName="transfer_list"
+                                  constraintName="fk_transfer_list1_account"
+                                  deferrable="true"
+                                  initiallyDeferred="true"
+                                  onDelete="CASCADE"
+                                  onUpdate="RESTRICT"
+                                  referencedColumnNames="id"
+                                  referencedTableName="account"
+                                  validate="true"/>
+    </changeSet>
+
+    <changeSet  author="Kildu"  id="2020-09-10 add username and password to client table for SECURITY">
+        <!--client table update - FOR SECURITY-->
+             <addColumn  tableName="client">
+            <column  name="user_name"  type="text" defaultValue="testUser">
+                <constraints  nullable="false"  primaryKey="false"  unique="false"/>
+            </column>
+        </addColumn>
+        <addColumn  tableName="client">
+            <column  name="password"  type="text" defaultValue="testPass">
+                <constraints  nullable="false"  primaryKey="false"  unique="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>
